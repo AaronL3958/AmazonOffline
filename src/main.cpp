@@ -12,18 +12,17 @@
 constexpr unsigned int WINDOW_WIDTH = 1600;
 constexpr unsigned int WINDOW_HEIGHT = 900;
 
-void loadItemImage(Item myItem) {
+bool loadItemImage(Item myItem) {
     //This is for loading the ImageLink of a specific object into our "THEIMAGE.jpg" so we can display it on SFML
     std::string url = myItem.getImageLink();
     std::cout << myItem.getName() << std::endl;
     std::cout << url << std::endl;
-    const char* dst = "Images/THEIMAGE.jpg";
+    const char* dst = "Image/THEIMAGE.jpg";
     if(S_OK == URLDownloadToFile(NULL, url.c_str(), dst, 0, NULL)){
-        std::cout << "Image Saved Successfully." << std::endl;
-
+        return true;
     }
     else {
-        std::cout << "ImageFailed" << std::endl;
+        return false;
     }
 }
 
@@ -646,7 +645,50 @@ int main() {
     }
     if (START_ButtonClicked) {
         auto itemWindow = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT), "items", sf::Style::Close);
-//        graph.orderByRatingScore()
+        std::vector<Item> myItems = graph.orderByRatingScore(selectedMain, selectedSub);
+        Item currentItem = myItems[0];
+
+        sf::Text objectName;
+        objectName.setFont(font);
+        objectName.setString(currentItem.getName());
+        objectName.setCharacterSize(24);
+        objectName.setFillColor(sf::Color::Black);
+        objectName.setStyle(sf::Text::Bold | sf::Text::Underlined);
+        objectName.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 10));
+        auto objectNameRect = objectName.getLocalBounds();
+        objectName.setOrigin(objectNameRect.left + objectNameRect.width / 2, objectNameRect.top);
+
+        sf::Text objectPrice;
+        objectPrice.setFont(font);
+        objectPrice.setString(currentItem.getPrice());
+        objectPrice.setCharacterSize(15);
+        objectPrice.setFillColor(sf::Color::Black);
+        objectPrice.setStyle(sf::Text::Bold);
+        objectPrice.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 10 + WINDOW_HEIGHT / 10));
+        auto objectPriceRect = objectPrice.getLocalBounds();
+        objectPrice.setOrigin(objectPriceRect.left + objectPriceRect.width / 2, objectPriceRect.top);
+
+        sf::Texture objectImageTexture;
+        if (loadItemImage(currentItem)) {
+            std::cout << "Image loaded Successfully" << std::endl;
+            if (!objectImageTexture.loadFromFile("Image/THEIMAGE.jpg")) {
+                perror("Couldn't load texture.");
+            }
+        }
+        else {
+            std::string failedURL = "https://cdn.vectorstock.com/i/500p/36/49/no-image-symbol-missing-available-icon-gallery-vector-43193649.jpg";
+            const char* dst = "Image/imageFailed.jpg";
+            URLDownloadToFile(NULL, failedURL.c_str(), dst, 0, NULL);
+            if (!objectImageTexture.loadFromFile("Image/imageFailed.jpg")) {
+                perror("Couldn't load texture.");
+            }
+        }
+        sf::Sprite objectImage;
+        objectImage.setTexture(objectImageTexture);
+        objectImage.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, 2 * WINDOW_HEIGHT / 10 + WINDOW_HEIGHT / 10));
+        auto objectImageRect = objectImage.getLocalBounds();
+        objectImage.setOrigin(sf::Vector2f(objectImageRect.left + objectImageRect.width/2, objectImageRect.top));
+
         while (itemWindow.isOpen()) {
             sf::Event event {};
             while(itemWindow.pollEvent(event)) {
@@ -660,6 +702,9 @@ int main() {
                 }
             }
             itemWindow.clear(sf::Color::White);
+            itemWindow.draw(objectName);
+            itemWindow.draw(objectPrice);
+            itemWindow.draw(objectImage);
             itemWindow.display();
         }
     }

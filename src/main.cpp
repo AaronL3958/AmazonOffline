@@ -427,8 +427,8 @@ int main() {
     bool START_ButtonClicked = false;
 
     // Strings for Main Category and Sub Category Selected
-    std::string selectedMain;
-    std::string selectedSub;
+    std::string selectedMain = "";
+    std::string selectedSub = "";
 
     while (window.isOpen()) {
         sf::Event event {};
@@ -511,7 +511,12 @@ int main() {
                                 selectedSub = allSubCats[subIndex];
                             }
                         }
-                        window.close();
+                        if (selectedMain != "" && selectedSub != "") {
+                            window.close();
+                        }
+                        else {
+                            START_ButtonClicked = false;
+                        }
                     }
                 }
             }
@@ -658,13 +663,23 @@ int main() {
         auto objectNameRect = objectName.getLocalBounds();
         objectName.setOrigin(objectNameRect.left + objectNameRect.width / 2, objectNameRect.top);
 
+        sf::Text objectRating;
+        objectRating.setFont(font);
+        objectRating.setString("Rating: " + std::to_string(currentItem.getRating()).substr(0,3) + " stars");
+        objectRating.setCharacterSize(15);
+        objectRating.setFillColor(sf::Color::Black);
+        objectRating.setStyle(sf::Text::Bold);
+        objectRating.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, 2 * WINDOW_HEIGHT / 10));
+        auto objectRatingRect = objectRating.getLocalBounds();
+        objectRating.setOrigin(objectRatingRect.left + objectRatingRect.width / 2, objectRatingRect.top);
+
         sf::Text objectPrice;
         objectPrice.setFont(font);
         objectPrice.setString(currentItem.getPrice());
         objectPrice.setCharacterSize(15);
         objectPrice.setFillColor(sf::Color::Black);
         objectPrice.setStyle(sf::Text::Bold);
-        objectPrice.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 10 + WINDOW_HEIGHT / 10));
+        objectPrice.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, 3 *  WINDOW_HEIGHT / 10));
         auto objectPriceRect = objectPrice.getLocalBounds();
         objectPrice.setOrigin(objectPriceRect.left + objectPriceRect.width / 2, objectPriceRect.top);
 
@@ -685,7 +700,7 @@ int main() {
         }
         sf::Sprite objectImage;
         objectImage.setTexture(objectImageTexture);
-        objectImage.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, 2 * WINDOW_HEIGHT / 10 + WINDOW_HEIGHT / 10));
+        objectImage.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, 4 * WINDOW_HEIGHT / 10));
         auto objectImageRect = objectImage.getLocalBounds();
         objectImage.setOrigin(sf::Vector2f(objectImageRect.left + objectImageRect.width/2, objectImageRect.top));
 
@@ -705,6 +720,7 @@ int main() {
             itemWindow.draw(objectName);
             itemWindow.draw(objectPrice);
             itemWindow.draw(objectImage);
+            itemWindow.draw(objectRating);
             itemWindow.display();
         }
     }

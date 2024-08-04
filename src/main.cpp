@@ -409,7 +409,7 @@ int main() {
     for (int i = 0; i < 13; i++) {
         auto tempSubCatRight = new sf::Text;
         tempSubCatRight->setFont(font);
-        tempSubCatRight->setString(allSubCats[i]);
+        tempSubCatRight->setString(allSubCats[i + 13]);
         tempSubCatRight->setCharacterSize(20);
         tempSubCatRight->setFillColor(sf::Color::Black);
 
@@ -423,8 +423,13 @@ int main() {
     sf::RectangleShape* selectedSubbox = nullptr;
     std::vector<sf::RectangleShape*> availableSubBoxes {};
 
-    // BFS_DFS_Window Logic
+    // Other Window Logic
     bool BFS_DFS_ButtonClicked = false;
+    bool START_ButtonClicked = false;
+
+    // Strings for Main Category and Sub Category Selected
+    std::string selectedMain;
+    std::string selectedSub;
 
     while (window.isOpen()) {
         sf::Event event {};
@@ -481,6 +486,32 @@ int main() {
                     }
                     if (BFS_DFS_Rectangle.getGlobalBounds().contains(mousePos)) {
                         BFS_DFS_ButtonClicked = true;
+                        window.close();
+                    }
+                    if (START_Rectangle.getGlobalBounds().contains(mousePos)) {
+                        START_ButtonClicked = true;
+                        // Lambda for getting index for RectangleBox vectors
+                        auto getIndexRect = [](std::vector<sf::RectangleShape*> v, sf::RectangleShape* s) -> int {
+                            auto iter = find(v.begin(), v.end(), s);
+                            if (iter != v.end()) {
+                                int index = iter - v.begin();
+                                return index;
+                            }
+                            return -1;
+                        };
+                        // Get Main and Sub Category
+                        for (auto& i : mainBoxes) {
+                            if (i->getOutlineColor() == sf::Color::Red) {
+                                int mainIndex = getIndexRect(mainBoxes, i);
+                                selectedMain = mainCats[mainIndex];
+                            }
+                        }
+                        for (auto& i : subBoxes) {
+                            if (i->getOutlineColor() == sf::Color::Red) {
+                                int subIndex = getIndexRect(subBoxes, i);
+                                selectedSub = allSubCats[subIndex];
+                            }
+                        }
                         window.close();
                     }
                 }
@@ -613,5 +644,25 @@ int main() {
             bfsDfsWindow.display();
         }
     }
+    if (START_ButtonClicked) {
+        auto itemWindow = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT), "items", sf::Style::Close);
+//        graph.orderByRatingScore()
+        while (itemWindow.isOpen()) {
+            sf::Event event {};
+            while(itemWindow.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    itemWindow.close();
+                }
+                if (event.type == sf::Event::KeyPressed) {
+                    if (event.key.code == sf::Keyboard::Escape) {
+                        itemWindow.close();
+                    }
+                }
+            }
+            itemWindow.clear(sf::Color::White);
+            itemWindow.display();
+        }
+    }
+
     return 0;
 }

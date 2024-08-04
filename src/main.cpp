@@ -26,8 +26,6 @@ bool loadItemImage(Item myItem) {
     }
 }
 
-// TODO IMPORTANT NOTE: DO NOT USE NAMESPACE STD because we have both sf and std libraries
-
 // int main() {
 // //     // Work with this one first to test out graph functionalities
 //     Graph graph;
@@ -715,7 +713,36 @@ int main() {
 
         // Next Button Logic
         int currentIndex = 0;
-//        sf::RectangleShape
+
+        sf::Text NEXTText;
+        NEXTText.setFont(font);
+        NEXTText.setString("NEXT");
+        NEXTText.setCharacterSize(40);
+        NEXTText.setFillColor(sf::Color::Black);
+
+        sf::FloatRect NEXTRect = NEXTText.getLocalBounds();
+        NEXTText.setOrigin(NEXTRect.width, NEXTRect.top);
+        NEXTText.setPosition(sf::Vector2f(itemWindow.getSize().x - 50.0f, itemWindow.getSize().y / 2.0f));
+
+        sf::RectangleShape NEXTRec(sf::Vector2f(310, 90));
+        NEXTRec.setOutlineColor(sf::Color(35,47,62));
+        NEXTRec.setOutlineThickness(10);
+        NEXTRec.setPosition(sf::Vector2f(itemWindow.getSize().x - 200.0f, itemWindow.getSize().y / 2.0f - 25.0f));
+
+        // Prev Button Logic
+        sf::Text PREVText;
+        PREVText.setFont(font);
+        PREVText.setString("PREV");
+        PREVText.setCharacterSize(40);
+        PREVText.setFillColor(sf::Color::Black);
+        sf::FloatRect PREVRect = PREVText.getLocalBounds();
+        PREVText.setOrigin(PREVRect.width, PREVRect.top);
+        PREVText.setPosition(sf::Vector2f(150.0f, itemWindow.getSize().y / 2.0f));
+
+        sf::RectangleShape PREVRec(sf::Vector2f(310, 90));
+        PREVRec.setOutlineColor(sf::Color(35,47,62));
+        PREVRec.setOutlineThickness(10);
+        PREVRec.setPosition(sf::Vector2f(-100.0f, itemWindow.getSize().y / 2.0f - 25.0f));
 
         while (itemWindow.isOpen()) {
             sf::Event event {};
@@ -728,6 +755,57 @@ int main() {
                         itemWindow.close();
                     }
                 }
+                if (event.type == sf::Event::MouseButtonPressed) {
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
+
+                        if (currentIndex == 0) {
+                            // Only have next button
+                            if (NEXTRec.getGlobalBounds().contains(mousePos)) {
+                                currentIndex++;
+                            }
+                        }
+                        else if (0 < currentIndex < myItems.size()) {
+                            // have both
+                            if (NEXTRec.getGlobalBounds().contains(mousePos)) {
+                                currentIndex++;
+                            }
+                            if (PREVRec.getGlobalBounds().contains(mousePos)) {
+                                currentIndex--;
+                            }
+                        }
+                        else {
+                            // Only have prev
+                            if (PREVRec.getGlobalBounds().contains(mousePos)) {
+                                currentIndex--;
+                            }
+                        }
+
+                        currentItem = myItems[currentIndex];
+                        objectName.setString(currentItem.getName());
+                        objectRating.setString("Rating: " + std::to_string(currentItem.getRating()).substr(0,3) + " stars");
+                        objectPrice.setString(currentItem.getPrice());
+                        objectLink.setString(currentItem.getAmazonLink());
+                        if (loadItemImage(currentItem)) {
+                            std::cout << "Image loaded Successfully" << std::endl;
+                            if (!objectImageTexture.loadFromFile("Image/THEIMAGE.jpg")) {
+                                perror("Couldn't load texture.");
+                            }
+                        }
+                        else {
+                            std::string failedURL = "https://cdn.vectorstock.com/i/500p/36/49/no-image-symbol-missing-available-icon-gallery-vector-43193649.jpg";
+                            const char* dst = "Image/imageFailed.jpg";
+                            URLDownloadToFile(NULL, failedURL.c_str(), dst, 0, NULL);
+                            if (!objectImageTexture.loadFromFile("Image/imageFailed.jpg")) {
+                                perror("Couldn't load texture.");
+                            }
+                        }
+                        objectImage.setTexture(objectImageTexture);
+                        objectImage.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, 4 * WINDOW_HEIGHT / 10));
+                        auto objectImageRect = objectImage.getLocalBounds();
+                        objectImage.setOrigin(sf::Vector2f(objectImageRect.left + objectImageRect.width/2, objectImageRect.top));
+                    }
+                }
             }
             itemWindow.clear(sf::Color::White);
             itemWindow.draw(objectName);
@@ -735,6 +813,21 @@ int main() {
             itemWindow.draw(objectImage);
             itemWindow.draw(objectRating);
             itemWindow.draw(objectLink);
+            // Apply index logic on buttons
+            if (currentIndex == 0) {
+                itemWindow.draw(NEXTRec);
+                itemWindow.draw(NEXTText);
+            }
+            else if (0 < currentIndex < myItems.size()) {
+                itemWindow.draw(NEXTRec);
+                itemWindow.draw(NEXTText);
+                itemWindow.draw(PREVRec);
+                itemWindow.draw(PREVText);
+            }
+            else {
+                itemWindow.draw(PREVRec);
+                itemWindow.draw(PREVText);
+            }
             itemWindow.display();
         }
     }

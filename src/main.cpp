@@ -704,6 +704,19 @@ int main() {
         auto objectImageRect = objectImage.getLocalBounds();
         objectImage.setOrigin(sf::Vector2f(objectImageRect.left + objectImageRect.width/2, objectImageRect.top));
 
+        sf::Text objectLink;
+        objectLink.setFont(font);
+        objectLink.setString(currentItem.getAmazonLink());
+        objectLink.setCharacterSize(15);
+        objectLink.setFillColor(sf::Color::Black);
+        objectLink.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, 9 *  WINDOW_HEIGHT / 10));
+        auto objectLinkRect = objectLink.getLocalBounds();
+        objectLink.setOrigin(objectLinkRect.left + objectLinkRect.width / 2, objectLinkRect.top);
+
+        // Next Button Logic
+        int currentIndex = 0;
+//        sf::RectangleShape
+
         while (itemWindow.isOpen()) {
             sf::Event event {};
             while(itemWindow.pollEvent(event)) {
@@ -721,6 +734,7 @@ int main() {
             itemWindow.draw(objectPrice);
             itemWindow.draw(objectImage);
             itemWindow.draw(objectRating);
+            itemWindow.draw(objectLink);
             itemWindow.display();
         }
     }

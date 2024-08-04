@@ -548,17 +548,47 @@ int main() {
         BFSTime.setFont(font);
         std::string BFSString = std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(d - c).count());
         BFSTime.setString(BFSString);
-        BFSTime.setCharacterSize(40);
+        BFSTime.setCharacterSize(30);
         BFSTime.setFillColor(sf::Color::Black);
-        BFSTime.setPosition(sf::Vector2f(WINDOW_WIDTH / 4, WINDOW_HEIGHT / 2));
+        BFSTime.setPosition(sf::Vector2f(WINDOW_WIDTH / 4 - WINDOW_WIDTH / 12, WINDOW_HEIGHT / 2));
+
+        sf::Text BFSmilli;
+        BFSmilli.setFont(font);
+        BFSmilli.setString("milliseconds");
+        BFSmilli.setCharacterSize(20);
+        BFSmilli.setFillColor(sf::Color::Black);
+        BFSmilli.setPosition(sf::Vector2f(WINDOW_WIDTH / 4 - WINDOW_WIDTH / 12, WINDOW_HEIGHT / 2 + WINDOW_HEIGHT / 10));
+
+        sf::Text BFSTag;
+        BFSTag.setFont(font);
+        BFSTag.setString("BFS (Breadth First Search):");
+        BFSTag.setCharacterSize(35);
+        BFSTag.setFillColor(sf::Color::Black);
+        BFSTag.setPosition(sf::Vector2f(WINDOW_WIDTH / 4 - WINDOW_WIDTH / 7, WINDOW_HEIGHT / 2 - WINDOW_HEIGHT / 10));
+        BFSTag.setStyle(sf::Text::Bold);
 
         sf::Text DFSTime;
         DFSTime.setFont(font);
         std::string DFSString = std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(f - e).count());
         DFSTime.setString(DFSString);
-        DFSTime.setCharacterSize(40);
+        DFSTime.setCharacterSize(30);
         DFSTime.setFillColor(sf::Color::Black);
-        DFSTime.setPosition(sf::Vector2f(3*WINDOW_WIDTH / 4, WINDOW_HEIGHT / 2));
+        DFSTime.setPosition(sf::Vector2f(3 * WINDOW_WIDTH / 4, WINDOW_HEIGHT / 2));
+
+        sf::Text DFSmilli;
+        DFSmilli.setFont(font);
+        DFSmilli.setString("milliseconds");
+        DFSmilli.setCharacterSize(20);
+        DFSmilli.setFillColor(sf::Color::Black);
+        DFSmilli.setPosition(sf::Vector2f(4*WINDOW_WIDTH / 5 - WINDOW_WIDTH / 20, WINDOW_HEIGHT / 2 + WINDOW_HEIGHT / 10));
+
+        sf::Text DFSTag;
+        DFSTag.setFont(font);
+        DFSTag.setString("DFS (Depth First Search):");
+        DFSTag.setCharacterSize(35);
+        DFSTag.setFillColor(sf::Color::Black);
+        DFSTag.setPosition(sf::Vector2f(3 * WINDOW_WIDTH / 4 - WINDOW_WIDTH / 8, WINDOW_HEIGHT / 2 - WINDOW_HEIGHT / 10));
+        DFSTag.setStyle(sf::Text::Bold);
 
         while (bfsDfsWindow.isOpen()) {
             sf::Event event {};
@@ -576,6 +606,10 @@ int main() {
             // Draw elements for BFS/DFS window here
             bfsDfsWindow.draw(BFSTime);
             bfsDfsWindow.draw(DFSTime);
+            bfsDfsWindow.draw(BFSmilli);
+            bfsDfsWindow.draw(DFSmilli);
+            bfsDfsWindow.draw(BFSTag);
+            bfsDfsWindow.draw(DFSTag);
             bfsDfsWindow.display();
         }
     }
